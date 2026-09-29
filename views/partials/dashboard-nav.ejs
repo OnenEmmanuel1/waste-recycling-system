@@ -1,0 +1,25 @@
+<%
+const adminNav = [
+  { href: '/admin', label: 'Overview' },
+  { href: '/admin/reports', label: 'Report review' },
+  { href: '/admin/centers', label: 'Collection centres' },
+  { href: '/admin/content', label: 'Learning resources' },
+  { href: '/admin/users', label: 'Members' },
+];
+const memberNav = [
+  { href: '/dashboard', label: 'Overview' },
+  { href: '/dashboard/reports', label: 'My reports' },
+  { href: '/dashboard/activity', label: 'Recycling activity' },
+];
+const dashNav = currentUser.role === 'Administrator' ? adminNav : memberNav;
+%>
+<aside class="ewrap-dash-sidebar" aria-label="Dashboard navigation">
+  <div class="ewrap-dash-workspace"><span class="ewrap-dash-avatar"><%= currentUser.fullName.slice(0,1).toUpperCase() %></span><span><strong><%= currentUser.fullName %></strong><small><%= currentUser.role === 'Administrator' ? 'Administrator' : 'EWRAP member' %></small></span></div>
+  <span class="ewrap-dash-nav-label">WORKSPACE</span>
+  <nav class="ewrap-dash-nav">
+    <% dashNav.forEach((item) => { const active = item.href === '/admin' || item.href === '/dashboard' ? currentPath === item.href : currentPath.startsWith(item.href); %>
+      <a class="ewrap-dash-link <%= active ? 'is-active' : '' %>" href="<%= item.href %>" <%= active ? 'aria-current="page"' : '' %>><span><%= item.label %></span><% if(item.href==='/admin/reports') { %><span class="ewrap-dash-link-arrow" aria-hidden="true">›</span><% } %></a>
+    <% }) %>
+  </nav>
+  <div class="ewrap-dash-sidebar-bottom"><a href="/">View public site <span aria-hidden="true">↗</span></a><form method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrf %>"><button type="submit">Sign out</button></form></div>
+</aside>

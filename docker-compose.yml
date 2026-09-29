@@ -1,0 +1,52 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      APP_NAME: ${APP_NAME:-EWRAP}
+      APP_PORT: 3000
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      APP_TIMEZONE: ${APP_TIMEZONE:-Africa/Lagos}
+      APP_DEBUG: ${APP_DEBUG:-0}
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ewrap
+      DB_USER: ewrap_app
+      DB_CONNECTION_LIMIT: ${DB_CONNECTION_LIMIT:-10}
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in .env before starting EWRAP}
+      SESSION_SECURE: ${SESSION_SECURE:-0}
+      SESSION_MAX_AGE_HOURS: ${SESSION_MAX_AGE_HOURS:-8}
+      UPLOADS_DIR: /app/uploads
+      MAX_PHOTO_UPLOAD_MB: ${MAX_PHOTO_UPLOAD_MB:-5}
+      TZ: ${APP_TIMEZONE:-Africa/Lagos}
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+  db:
+    image: mysql:8.0
+    ports:
+      - "127.0.0.1:${DB_FORWARD_PORT:-3309}:3306"
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci", "--default-time-zone=+01:00"]
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: ewrap
+      TZ: ${APP_TIMEZONE:-Africa/Lagos}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./sql/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - ./sql/create-app-user.sql:/docker-entrypoint-initdb.d/03-create-app-user.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+volumes:
+  db_data:
+  uploads:

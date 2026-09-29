@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e5ebe7">
+  <title><%= title %> · <%= appName %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/tokens.css" rel="stylesheet">
+  <link href="/css/app.css" rel="stylesheet">
+  <% if (currentPath === '/centers') { %><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><% } %>
+</head>
+<% const authPage = currentPath === '/login' || currentPath === '/register'; %>
+<% const dashboardPage = currentPath === '/dashboard' || currentPath.startsWith('/dashboard/') || currentPath === '/admin' || currentPath.startsWith('/admin/'); %>
+<body class="<%= authPage ? 'ewrap-auth-page' : '' %>">
+<% if (!authPage) { %>
+<header class="ewrap-nav">
+  <nav class="navbar navbar-expand-lg container ewrap-navin">
+    <a class="navbar-brand ewrap-brand" href="/"><img class="ewrap-brand-mark" src="/images/ewrap-logo.svg" alt=""><span class="ewrap-brand-copy"><strong>EWRAP</strong><small>UNICROSS · CALABAR</small></span></a>
+    <% if (!dashboardPage) { %>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ewrapNav" aria-controls="ewrapNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="ewrapNav">
+      <div class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+        <a class="nav-link" href="/centers">Find a centre</a>
+        <a class="nav-link" href="/articles/awareness">Learn</a>
+        <a class="nav-link" href="/articles/policy">Policies</a>
+        <% if (currentUser) { %>
+          <% if (currentUser.role === 'Administrator') { %><a class="nav-link" href="/admin">Admin</a><% } else if (currentUser.role === 'RegisteredUser') { %><a class="nav-link" href="/dashboard">My activity</a><% } %>
+          <form method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="ewrap-navbutton" type="submit">Sign out</button></form>
+        <% } else { %><a class="nav-link" href="/login">Sign in</a><a class="ewrap-btn ewrap-small" href="/register">Join EWRAP</a><% } %>
+      </div>
+    </div>
+    <% } else if (currentUser) { %><div class="ewrap-top-user"><span><%= currentUser.fullName.slice(0,1).toUpperCase() %></span><strong><%= currentUser.fullName %></strong></div><% } %>
+  </nav>
+</header>
+<% } %>
+<main class="container ewrap-wrap <%= authPage ? 'ewrap-auth-layout' : '' %>">
+  <% if (flash) { %><div class="alert <%= flash.type === 'error' ? 'alert-danger' : 'alert-success' %>" role="status"><%= flash.message %></div><% } %>

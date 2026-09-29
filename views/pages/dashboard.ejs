@@ -1,0 +1,22 @@
+<%- include('../partials/header', { title, currentPath, currentUser, csrf, flash, appName }) %>
+<div class="ewrap-dashboard"><%- include('../partials/dashboard-nav', { currentPath, currentUser, csrf }) %><div class="ewrap-dash-main">
+  <header class="ewrap-dash-heading"><div><span class="ewrap-eyebrow">MEMBER WORKSPACE</span><h1>Welcome back, <%= currentUser.fullName.split(' ')[0] %></h1><p>Here’s your e-waste reporting and recycling activity at a glance.</p></div><a class="ewrap-btn" href="/dashboard/reports#new-report">Report e-waste <span aria-hidden="true">+</span></a></header>
+  <section class="ewrap-dash-stats" aria-label="Your participation summary">
+    <article class="ewrap-dash-stat"><span class="ewrap-dash-stat-label">Reports submitted</span><span class="ewrap-dash-stat-icon">R</span><strong><%= stats.reports %></strong><small>Items shared with the review team</small></article>
+    <article class="ewrap-dash-stat"><span class="ewrap-dash-stat-label">Recycling actions</span><span class="ewrap-dash-stat-icon">↗</span><strong><%= stats.logs %></strong><small>Drop-offs recorded by you</small></article>
+    <article class="ewrap-dash-stat"><span class="ewrap-dash-stat-label">Awaiting review</span><span class="ewrap-dash-stat-icon">…</span><strong><%= stats.pending %></strong><small>Reports still in the review queue</small></article>
+    <article class="ewrap-dash-stat ewrap-dash-stat-highlight"><span class="ewrap-dash-stat-label">Member since</span><span class="ewrap-dash-stat-icon">✳</span><strong><%= new Date(currentUser.createdAt).toLocaleDateString('en-NG',{year:'numeric',month:'short'}) %></strong><small>Thanks for taking part at UNICROSS</small></article>
+  </section>
+  <section class="ewrap-dash-quick-actions" aria-label="Quick actions"><a href="/dashboard/reports#new-report"><span class="ewrap-quick-icon">+</span><span><strong>Submit a report</strong><small>Tell the team what needs collection</small></span><span class="ewrap-quick-arrow">↗</span></a><a href="/dashboard/activity#log-activity"><span class="ewrap-quick-icon">↗</span><span><strong>Log a recycling action</strong><small>Record a device drop-off</small></span><span class="ewrap-quick-arrow">↗</span></a><a href="/centers"><span class="ewrap-quick-icon">⌖</span><span><strong>Find a collection centre</strong><small>See verified local drop-off points</small></span><span class="ewrap-quick-arrow">↗</span></a></section>
+  <div class="ewrap-dash-columns">
+    <section class="ewrap-dash-panel"><div class="ewrap-dash-panel-head"><div><span class="ewrap-eyebrow">CAMPUS REPORTING</span><h2>Recent reports</h2></div><a href="/dashboard/reports">All reports <span aria-hidden="true">→</span></a></div><div class="ewrap-dash-list">
+      <% if (!reports.length) { %><div class="ewrap-dash-empty"><strong>No reports yet</strong><span>Your submitted e-waste reports will show here.</span><a href="/dashboard/reports#new-report">Create your first report</a></div><% } %>
+      <% reports.slice(0,5).forEach((report) => { %><div class="ewrap-dash-row"><span class="ewrap-dash-row-mark">R</span><span class="ewrap-dash-row-copy"><strong><%= report.itemType %></strong><small><%= report.campusLocation %> · <%= new Date(report.reportedAt).toLocaleDateString('en-NG') %></small></span><span class="ewrap-status ewrap-<%= report.status.toLowerCase() %>"><%= report.status %></span></div><% }) %>
+    </div></section>
+    <section class="ewrap-dash-panel"><div class="ewrap-dash-panel-head"><div><span class="ewrap-eyebrow">YOUR CONTRIBUTION</span><h2>Recent activity</h2></div><a href="/dashboard/activity">Activity history <span aria-hidden="true">→</span></a></div><div class="ewrap-dash-list">
+      <% if (!logs.length) { %><div class="ewrap-dash-empty"><strong>No activity logged</strong><span>Record a drop-off to start your recycling history.</span><a href="/dashboard/activity#log-activity">Log an activity</a></div><% } %>
+      <% logs.slice(0,5).forEach((log) => { %><div class="ewrap-dash-row"><span class="ewrap-dash-row-mark ewrap-dash-row-mark-green">↗</span><span class="ewrap-dash-row-copy"><strong><%= log.itemType %> · <%= log.quantity %></strong><small><%= log.centerName || 'Other location' %> · <%= new Date(log.loggedAt).toLocaleDateString('en-NG') %></small></span><span class="ewrap-dash-row-status">Recorded</span></div><% }) %>
+    </div></section>
+  </div>
+</div></div>
+<%- include('../partials/footer') %>

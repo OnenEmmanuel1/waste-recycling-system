@@ -1,0 +1,33 @@
+{
+  "name": "ewrap",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EWRAP - E-Waste Recycling Awareness Platform for UNICROSS Calabar (Node.js, Express, EJS, MySQL)",
+  "type": "module",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node scripts/dev.js",
+    "db:setup": "node scripts/setup-database.js",
+    "db:seed": "node scripts/setup-database.js --seed-only",
+    "seed": "node scripts/seed.js",
+    "check": "node scripts/check-health.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "helmet": "^8.0.0",
+    "multer": "^2.0.1",
+    "mysql2": "^3.11.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

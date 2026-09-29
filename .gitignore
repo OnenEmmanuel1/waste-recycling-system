@@ -1,0 +1,13 @@
+vendor/
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+uploads/
+*.pem
+*.key
+secrets/
+# OS files
+Thumbs.db
+.DS_Store
